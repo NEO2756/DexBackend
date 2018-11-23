@@ -9,8 +9,8 @@ var Accounts = require('web3-eth-accounts');
 var artifacts = require('./contracts/build/contracts/DEXHIGH2.json');
 
 //var web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/IhLG9qqYJAtwKaMkbXQU'));
-var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
-const contractAddress = '0x7e0c9aa5c4a04f6214ac3cbc5984460b558a3958';
+var web3 = new Web3(new Web3.providers.HttpProvider('http://ec2-54-180-123-66.ap-northeast-2.compute.amazonaws.com:8545'));
+const contractAddress = '0x3dafded77a5bdc300ab4a1871f3c9754974feb29';
 const contractABI = artifacts.abi;
 
 const contract = new web3.eth.Contract(contractABI, contractAddress);
@@ -124,7 +124,18 @@ app.get('/AddOwner', (req, res) => {
   });
 })
 
+app.get('/GetOnwerList', (req, res) => {
+  owner = req.body.owner;
+  console.log(owner);
 
+  contract.methods.GetOnwerList().call({from: owner, to:contractAddress}, function (err, result) {
+    if (err) {
+      res.status(400).send("Error GetOnwerList");
+    } else {
+      res.status(200).json({"ownerList": result});
+    }
+  })
+})
 
 app.get('/AddProduct', (req, res) => {
   product = req.body.product;
@@ -163,7 +174,7 @@ app.get('/GetAccountList', (req, res) => {
     if (err) {
       res.status(400).send("Error GetProductList");
     } else {
-      res.status(200).json({"productList": result});
+      res.status(200).json({"accountList": result});
     }
   })
 })
